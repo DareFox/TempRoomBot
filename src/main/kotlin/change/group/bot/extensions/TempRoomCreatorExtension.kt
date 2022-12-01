@@ -35,7 +35,7 @@ private val klogger = KotlinLogging.logger { }
 
 // If you in class file, here's your clickable link -> https://kordex.kotlindiscord.com
 class TempRoomCreatorExtension : Extension() {
-    override val name: String = "PingPongExtension"
+    override val name: String = "TempRoomCreatorExtension"
 
     override suspend fun setup() {
         event<VoiceStateUpdateEvent> {
