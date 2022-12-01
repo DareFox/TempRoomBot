@@ -13,6 +13,7 @@ import com.kotlindiscord.kord.extensions.extensions.ephemeralSlashCommand
 import com.kotlindiscord.kord.extensions.extensions.event
 import com.kotlindiscord.kord.extensions.types.respond
 import dev.kord.common.entity.*
+import dev.kord.core.behavior.channel.asChannelOf
 import dev.kord.core.behavior.createVoiceChannel
 import dev.kord.core.behavior.edit
 import dev.kord.core.entity.Guild
@@ -42,18 +43,34 @@ class TempRoomCreatorExtension : Extension() {
                 val settings = event.state.getGuild().tempRoomSettings.getSettings() ?: return@action;
                 val guild = event.state.getGuild()
 
+                val previousChannel = event.old?.getChannelOrNull()
+                val roomEntry = previousChannel?.let { guild.tempRoomCollection.getRoomByRoomId(it.id.toString()) }
+
+                val noOneInOldChannel = previousChannel != null && previousChannel.voiceStates.singleOrNull() == null
+                val joinedCreatorRoom = event.state.channelId.toString() == settings.creatorRoomId
+                val authorLeft = roomEntry?.authorId != null && roomEntry.authorId == event.old?.userId?.toString()
+
                 // On join creator room
-                if (event.state.channelId.toString() == settings.creatorRoomId) {
-                    val room = createRoomForUser(event.state.getGuild(), event.state.userId)
-                    moveUserToRoom(event.state.getMember(), room)
+                if (joinedCreatorRoom) {
+                    // If last user exists channel, and it's author, and he's moved to creator room
+                    // Then don't re-create channel, just move to already existing one
+                    if (noOneInOldChannel && authorLeft) {
+                        previousChannel ?: return@action
+
+                        moveUserToRoom(event.state.getMember(), previousChannel.asChannelOf())
+                        return@action
+                    } else { // Create room and move user
+                        val room = createRoomForUser(event.state.getGuild(), event.state.userId)
+                        moveUserToRoom(event.state.getMember(), room)
+                        return@action
+                    }
                 }
 
-                val previousChannel = event.old?.getChannelOrNull() ?: return@action
-                val noOneInChannel = previousChannel.voiceStates.singleOrNull() == null
+                // On exit of created channel and room is empty
+                if (noOneInOldChannel) {
+                    previousChannel ?: return@action
+                    roomEntry ?: return@action
 
-                // On exit of created channel
-                if (event.state.channelId == null && noOneInChannel) {
-                    val roomEntry = guild.tempRoomCollection.getRoomByRoomId(previousChannel.id.toString()) ?: return@action
                     val newPermissions = previousChannel.asChannel().permissionOverwrites.map {
                         val data = it.data
                         Overwrite(data.id, data.type, data.allowed, data.denied)
@@ -65,6 +82,7 @@ class TempRoomCreatorExtension : Extension() {
                     )
                     guild.tempRoomCollection.updateRoom(newEntry);
                     previousChannel.delete("Room is empty")
+                    return@action
                 }
             }
         }
