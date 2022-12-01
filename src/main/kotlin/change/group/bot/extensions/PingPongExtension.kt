@@ -11,7 +11,7 @@ import com.kotlindiscord.kord.extensions.types.respond
 import dev.kord.rest.builder.message.create.embed
 import mu.KotlinLogging
 
-val klogger = KotlinLogging.logger { }
+private val klogger = KotlinLogging.logger { }
 
 /**
  * Example of how you can use Extensions in Kord Extensions
