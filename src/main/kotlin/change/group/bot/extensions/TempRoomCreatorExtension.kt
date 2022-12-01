@@ -59,7 +59,10 @@ class TempRoomCreatorExtension : Extension() {
                         Overwrite(data.id, data.type, data.allowed, data.denied)
                     }.toSet()
 
-                    val newEntry = roomEntry.copy(overwrites = newPermissions)
+                    val newEntry = roomEntry.copy(
+                        name = previousChannel.asChannel().name,
+                        overwrites = newPermissions,
+                    )
                     guild.tempRoomCollection.updateRoom(newEntry);
                     previousChannel.delete("Room is empty")
                 }
