@@ -76,6 +76,7 @@ class TempRoomCreatorExtension : Extension() {
                         Overwrite(data.id, data.type, data.allowed, data.denied)
                     }.toSet()
 
+                    // TODO: Save bitrate and limit count
                     val newEntry = roomEntry.copy(
                         name = previousChannel.asChannel().name,
                         overwrites = newPermissions,
