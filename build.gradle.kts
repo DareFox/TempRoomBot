@@ -27,11 +27,12 @@ dependencies {
     implementation("com.kotlindiscord.kord.extensions:kord-extensions:$kordExtVersion")
 
     // Logger
-    implementation("ch.qos.logback:logback-classic:1.2.11")
-    implementation("io.github.microutils:kotlin-logging-jvm:2.1.21")
+    implementation("ch.qos.logback:logback-classic:1.4.5")
+    implementation("io.github.microutils:kotlin-logging-jvm:3.0.4")
 
     // MongoDB
-    implementation("org.litote.kmongo:kmongo:4.5.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
+    implementation("org.litote.kmongo:kmongo-serialization:4.8.0")
 }
 
 // Create fat-jar on build
