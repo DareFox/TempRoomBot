@@ -47,6 +47,7 @@ class TempRoomCreatorExtension : Extension() {
                 val roomEntry =  guild.tempRoomCollection.getRoomByAuthor(event.state.userId.toString())
 
                 val noOneInOldChannel = previousChannel != null && previousChannel.voiceStates.singleOrNull() == null
+                val oldChannelIsTemp = roomEntry?.previousRoomId == previousChannel?.id.toString()
                 val joinedCreatorRoom = event.state.channelId.toString() == settings.creatorRoomId
                 val authorLeft = roomEntry?.authorId != null && roomEntry.authorId == event.old?.userId?.toString()
 
@@ -67,7 +68,7 @@ class TempRoomCreatorExtension : Extension() {
                 }
 
                 // On exit of created channel and room is empty
-                if (noOneInOldChannel) {
+                if (oldChannelIsTemp && noOneInOldChannel) {
                     previousChannel ?: return@action
                     roomEntry ?: return@action
 
