@@ -1,3 +1,3 @@
 // TODO: Change project name
-rootProject.name = "MongoKordTemplate"
+rootProject.name = "TempRoomBotDiscord"
 
