@@ -48,22 +48,27 @@ class TempRoomCreatorExtension : Extension() {
 
                 val noOneInOldChannel = previousChannel != null && previousChannel.voiceStates.singleOrNull() == null
                 val oldChannelIsTemp = roomEntry?.previousRoomId == previousChannel?.id.toString()
+
                 val joinedCreatorRoom = event.state.channelId.toString() == settings.creatorRoomId
-                val authorLeft = roomEntry?.authorId != null && roomEntry.authorId == event.old?.userId?.toString()
 
                 // On join creator room
                 if (joinedCreatorRoom) {
+                    val member = event.state.getMember()
+
+                    val channels = guild.channelIds
+
+                    // Check if previous room by id exists, not state
+                    val existingOwnedChannel = roomEntry?.previousRoomId?.toSnow()?.takeIf {
+                        it in channels
+                    }
+
                     // If last user exists channel, and it's author, and he's moved to creator room
                     // Then don't re-create channel, just move to already existing one
-                    if (noOneInOldChannel && authorLeft) {
-                        previousChannel ?: return@action
-
-                        moveUserToRoom(event.state.getMember(), previousChannel.asChannelOf())
-                        return@action
+                    if (existingOwnedChannel != null) {
+                        moveUserToRoom(member, existingOwnedChannel)
                     } else { // Create room and move user
-                        val room = createRoomForUser(event.state.getGuild(), event.state.userId)
-                        moveUserToRoom(event.state.getMember(), room)
-                        return@action
+                        val room = createRoomForUser(guild, event.state.userId)
+                        moveUserToRoom(member, room)
                     }
                 }
 
@@ -97,15 +102,18 @@ class TempRoomCreatorExtension : Extension() {
             guild(Config.testGuildID.toSnow())
 
             action {
+                requirePermissions(setOf(Permission.ManageChannels)) ?: return@action
+
+                val settingsDb = guild?.tempRoomSettings
+                // Update counter
+                val previous = settingsDb?.getSettings() ?: TempRoomSettingsEntry(arguments.idCreator, null)
+                val newSettings = previous.copy(creatorRoomId = arguments.idCreator)
+                settingsDb?.setSettings(newSettings);
+
                 respond {
-                    klogger.info { "executed private/ephemeral creator command" }
-
                     embed {
-                        title = "Setting id creator"
+                        title = "Creator room was changed to ${arguments.idCreator}"
                     }
-
-                    // Update counter
-                    guild?.tempRoomSettings?.setSettings(TempRoomSettingsEntry(arguments.idCreator));
                 }
             }
         }
@@ -126,8 +134,11 @@ class TempRoomCreatorExtension : Extension() {
     }
 
     private suspend fun moveUserToRoom(guildMember: Member, voiceChannel: VoiceChannel) {
+        moveUserToRoom(guildMember, voiceChannel.id)
+    }
+    private suspend fun moveUserToRoom(guildMember: Member, voiceChannel: Snowflake) {
         guildMember.edit {
-            voiceChannelId = voiceChannel.id;
+            voiceChannelId = voiceChannel;
         }
     }
 
