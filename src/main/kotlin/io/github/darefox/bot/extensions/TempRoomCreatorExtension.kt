@@ -43,11 +43,14 @@ class TempRoomCreatorExtension : Extension() {
                 val guild = event.state.getGuild()
                 val settings = guild.tempRoomSettings.getSettings() ?: return@action;
 
-                val previousChannel = event.old?.getChannelOrNull()
-                val roomEntry =  guild.tempRoomCollection.getRoomByAuthor(event.state.userId.toString())
+                val authorRoomEntry =  guild.tempRoomCollection.getRoomByAuthor(event.state.userId.toString())
 
-                val noOneInOldChannel = previousChannel != null && previousChannel.voiceStates.singleOrNull() == null
-                val oldChannelIsTemp = roomEntry?.previousRoomId == previousChannel?.id.toString()
+                val oldChannel = event.old?.getChannelOrNull()
+                val oldChannelRoomEntry = oldChannel?.let {
+                    guild.tempRoomCollection.getRoomByRoomId(it.id.toString())
+                }
+                val oldChannelIsEmpty = oldChannel != null && oldChannel.voiceStates.singleOrNull() == null
+                val oldChannelIsTemp = oldChannelRoomEntry?.previousRoomId == oldChannel?.id.toString()
 
                 val joinedCreatorRoom = event.state.channelId.toString() == settings.creatorRoomId
 
@@ -58,7 +61,7 @@ class TempRoomCreatorExtension : Extension() {
                     val channels = guild.channelIds
 
                     // Check if previous room by id exists, not state
-                    val existingOwnedChannel = roomEntry?.previousRoomId?.toSnow()?.takeIf {
+                    val existingOwnedChannel = authorRoomEntry?.previousRoomId?.toSnow()?.takeIf {
                         it in channels
                     }
 
@@ -73,23 +76,22 @@ class TempRoomCreatorExtension : Extension() {
                 }
 
                 // On exit of created channel and room is empty
-                if (oldChannelIsTemp && noOneInOldChannel) {
-                    previousChannel ?: return@action
-                    roomEntry ?: return@action
+                if (oldChannelIsTemp && oldChannelIsEmpty) {
+                    oldChannel ?: return@action
+                    oldChannelRoomEntry ?: return@action
 
-                    val newPermissions = previousChannel.asChannel().permissionOverwrites.map {
+                    val newPermissions = oldChannel.asChannel().permissionOverwrites.map {
                         val data = it.data
                         Overwrite(data.id, data.type, data.allowed, data.denied)
                     }.toSet()
 
                     // TODO: Save bitrate and limit count
-                    val newEntry = roomEntry.copy(
-                        name = previousChannel.asChannel().name,
+                    val newEntry = oldChannelRoomEntry.copy(
+                        name = oldChannel.asChannel().name,
                         overwrites = newPermissions,
                     )
                     guild.tempRoomCollection.updateRoom(newEntry);
-                    previousChannel.delete("Room is empty")
-                    return@action
+                    oldChannel.delete("Room is empty")
                 }
             }
         }
@@ -117,6 +119,7 @@ class TempRoomCreatorExtension : Extension() {
                 }
             }
         }
+
     }
 
     private suspend fun createRoomForUser(guild: Guild, memberId: Snowflake): VoiceChannel {
