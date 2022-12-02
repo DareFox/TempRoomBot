@@ -40,8 +40,8 @@ class TempRoomCreatorExtension : Extension() {
     override suspend fun setup() {
         event<VoiceStateUpdateEvent> {
             action {
-                val settings = event.state.getGuild().tempRoomSettings.getSettings() ?: return@action;
                 val guild = event.state.getGuild()
+                val settings = guild.tempRoomSettings.getSettings() ?: return@action;
 
                 val previousChannel = event.old?.getChannelOrNull()
                 val roomEntry =  guild.tempRoomCollection.getRoomByAuthor(event.state.userId.toString())
