@@ -1,9 +1,9 @@
-package change.group.bot.extensions
+package io.github.darefox.bot.extensions
 
-import change.group.bot.Config
-import change.group.bot.database.global.CounterCollection
-import change.group.bot.models.PongCounterEntry
-import change.group.bot.util.toSnow
+import io.github.darefox.bot.Config
+import io.github.darefox.bot.database.global.CounterCollection
+import io.github.darefox.bot.models.PongCounterEntry
+import io.github.darefox.bot.util.toSnow
 import com.kotlindiscord.kord.extensions.extensions.Extension
 import com.kotlindiscord.kord.extensions.extensions.ephemeralSlashCommand
 import com.kotlindiscord.kord.extensions.extensions.publicSlashCommand

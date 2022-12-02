@@ -1,4 +1,4 @@
-package change.group.bot.util
+package io.github.darefox.bot.util
 
 import com.kotlindiscord.kord.extensions.extensions.Extension
 import com.kotlindiscord.kord.extensions.extensions.publicSlashCommand

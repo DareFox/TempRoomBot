@@ -1,4 +1,4 @@
-package change.group.bot.models
+package io.github.darefox.bot.models
 
 @kotlinx.serialization.Serializable
 data class PongCounterEntry(

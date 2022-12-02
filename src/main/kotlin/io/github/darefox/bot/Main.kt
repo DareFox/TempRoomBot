@@ -1,7 +1,7 @@
-package change.group.bot
+package io.github.darefox.bot
 
-import change.group.bot.extensions.PingPongExtension
-import change.group.bot.extensions.TempRoomCreatorExtension
+import io.github.darefox.bot.extensions.PingPongExtension
+import io.github.darefox.bot.extensions.TempRoomCreatorExtension
 import com.kotlindiscord.kord.extensions.ExtensibleBot
 import dev.kord.gateway.Intents
 import dev.kord.gateway.PrivilegedIntent

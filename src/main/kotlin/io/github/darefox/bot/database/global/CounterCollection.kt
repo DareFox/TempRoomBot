@@ -1,7 +1,7 @@
-package change.group.bot.database.global
+package io.github.darefox.bot.database.global
 
-import change.group.bot.Config
-import change.group.bot.models.PongCounterEntry
+import io.github.darefox.bot.Config
+import io.github.darefox.bot.models.PongCounterEntry
 import com.mongodb.client.model.UpdateOptions
 import dev.kord.common.entity.Snowflake
 import org.litote.kmongo.*

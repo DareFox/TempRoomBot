@@ -1,7 +1,7 @@
-package change.group.bot.database.guild
+package io.github.darefox.bot.database.guild
 
-import change.group.bot.Config
-import change.group.bot.models.TempRoomSettingsEntry
+import io.github.darefox.bot.Config
+import io.github.darefox.bot.models.TempRoomSettingsEntry
 import com.mongodb.client.model.UpdateOptions
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.behavior.GuildBehavior

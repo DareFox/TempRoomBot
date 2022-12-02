@@ -1,11 +1,12 @@
-package change.group.bot.extensions
+package io.github.darefox.bot.extensions
 
-import change.group.bot.Config
-import change.group.bot.database.guild.tempRoomCollection
-import change.group.bot.database.guild.tempRoomSettings
-import change.group.bot.models.TempRoomEntry
-import change.group.bot.models.TempRoomSettingsEntry
-import change.group.bot.util.toSnow
+import io.github.darefox.bot.Config
+import io.github.darefox.bot.database.guild.tempRoomCollection
+import io.github.darefox.bot.database.guild.tempRoomSettings
+import io.github.darefox.bot.models.TempRoomEntry
+import io.github.darefox.bot.models.TempRoomSettingsEntry
+import io.github.darefox.bot.util.requirePermissions
+import io.github.darefox.bot.util.toSnow
 import com.kotlindiscord.kord.extensions.commands.Arguments
 import com.kotlindiscord.kord.extensions.commands.converters.impl.string
 import com.kotlindiscord.kord.extensions.extensions.Extension
@@ -13,7 +14,6 @@ import com.kotlindiscord.kord.extensions.extensions.ephemeralSlashCommand
 import com.kotlindiscord.kord.extensions.extensions.event
 import com.kotlindiscord.kord.extensions.types.respond
 import dev.kord.common.entity.*
-import dev.kord.core.behavior.channel.asChannelOf
 import dev.kord.core.behavior.createVoiceChannel
 import dev.kord.core.behavior.edit
 import dev.kord.core.entity.Guild

@@ -1,4 +1,4 @@
-package change.group.bot.models
+package io.github.darefox.bot.models
 
 import dev.kord.common.entity.Snowflake
 import kotlinx.serialization.Serializable

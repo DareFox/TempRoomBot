@@ -1,4 +1,4 @@
-package change.group.bot
+package io.github.darefox.bot
 
 import java.time.Instant
 import kotlin.time.DurationUnit
