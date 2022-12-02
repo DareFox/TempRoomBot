@@ -120,6 +120,27 @@ class TempRoomCreatorExtension : Extension() {
             }
         }
 
+        ephemeralSlashCommand(::TempRoomCategoryArguments) {
+            name = "setcategory" // Name should be without whitespaces
+            description = "Set category id"
+
+            guild(Config.testGuildID.toSnow())
+
+            action {
+                requirePermissions(setOf(Permission.ManageChannels)) ?: return@action
+
+                val settingsDb = guild?.tempRoomSettings
+                // Update counter
+                val previous = settingsDb?.getSettings() ?: TempRoomSettingsEntry(null, arguments.idCategory)
+                val newSettings = previous.copy(categoryId = arguments.idCategory)
+                settingsDb?.setSettings(newSettings);
+
+                respond {
+                    embed {
+                        title = "Category was changed to ${arguments.idCategory}"
+                    }
+                }
+            }
     }
 
     private suspend fun createRoomForUser(guild: Guild, memberId: Snowflake): VoiceChannel {
@@ -163,5 +184,10 @@ private class TempRoomCreatorArguments: Arguments() {
     val idCreator by string {
         name = "id"
         description = "creator room id"
+    }
+private class TempRoomCategoryArguments: Arguments() {
+    val idCategory by string {
+        name = "category_id"
+        description = "ID for category"
     }
 }
