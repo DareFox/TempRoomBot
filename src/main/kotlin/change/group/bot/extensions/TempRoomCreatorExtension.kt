@@ -44,7 +44,7 @@ class TempRoomCreatorExtension : Extension() {
                 val guild = event.state.getGuild()
 
                 val previousChannel = event.old?.getChannelOrNull()
-                val roomEntry = previousChannel?.let { guild.tempRoomCollection.getRoomByRoomId(it.id.toString()) }
+                val roomEntry =  guild.tempRoomCollection.getRoomByAuthor(event.state.userId.toString())
 
                 val noOneInOldChannel = previousChannel != null && previousChannel.voiceStates.singleOrNull() == null
                 val joinedCreatorRoom = event.state.channelId.toString() == settings.creatorRoomId
