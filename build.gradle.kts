@@ -6,8 +6,7 @@ plugins {
     application
 }
 
-// TODO: Change group
-group = "change.group"
+group = "io.github.darefox.bot"
 version = "1.0-SNAPSHOT"
 
 repositories {
