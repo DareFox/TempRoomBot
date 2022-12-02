@@ -141,15 +141,18 @@ class TempRoomCreatorExtension : Extension() {
                     }
                 }
             }
+        }
     }
 
     private suspend fun createRoomForUser(guild: Guild, memberId: Snowflake): VoiceChannel {
+        val settings = guild.tempRoomSettings.getSettings()
         val roomEntry =
             guild.tempRoomCollection.getRoomByAuthor(memberId.toString())
                 ?: createDefaultRoomEntry(memberId).also { guild.tempRoomCollection.updateRoom(it) }
 
         val channel =  guild.createVoiceChannel(roomEntry.name) {
             permissionOverwrites = roomEntry.overwrites.toMutableSet()
+            parentId = settings?.categoryId?.toSnow()
         }
 
         guild.tempRoomCollection.updateRoom(roomEntry.copy(previousRoomId = channel.id.toString()))
@@ -185,6 +188,7 @@ private class TempRoomCreatorArguments: Arguments() {
         name = "id"
         description = "creator room id"
     }
+}
 private class TempRoomCategoryArguments: Arguments() {
     val idCategory by string {
         name = "category_id"
