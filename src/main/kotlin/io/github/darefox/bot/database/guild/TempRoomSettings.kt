@@ -17,12 +17,8 @@ class TempRoomSettings(private val guildID: Snowflake) {
                 .getDatabase("Guild-${guildID.value}")
                 .getCollection<TempRoomSettingsEntry>("TempRoomSettings")
 
-            val searchQuery = and(
-                TempRoomSettingsEntry::creatorRoomId eq newSettings.creatorRoomId
-            )
-
             // Update entry, if it doesn't exists — insert it
-            collection.updateOne(searchQuery, newSettings, UpdateOptions().upsert(true))
+            collection.updateOne(and(),newSettings, UpdateOptions().upsert(true))
         }
     }
 
